@@ -1,249 +1,51 @@
 <!DOCTYPE html>
 <html>
-<head>
-	<title>Tetris</title>
-</head>
-<body>
-	<p id="score">Puntuacion: <span>0</span></p>
-	<canvas id="tetris_box" style="border:1px solid #000000;">
-		
-	</canvas>
-	<script type="text/javascript">
-
-		//1. inicializar el canvas
-		const canvas  = document.getElementById("tetris_box");
-		const context = canvas.getContext("2d");
-		const $score  = document.querySelector("span");
-
-		const BLOCK_SIZE   = 20;
-		const BOARD_WIDTH  = 14;
-		const BOARD_HEIGHT = 30;
-
-		let score = 0;
-
-		canvas.width = BLOCK_SIZE * BOARD_WIDTH;
-		canvas.height = BLOCK_SIZE * BOARD_HEIGHT;
-
-		context.scale(BLOCK_SIZE,BLOCK_SIZE);
-		context.lineWidth = 0.1;
-		context.lineCap = "square";	
-		context.miterLimit = 5;		
-
-		//3. board
-		const board = [
-			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-			[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0]
-		];
-
-
-		//4. piezas
-
-		const piece = {
-			position: { x: 5, y: 5 },
-			shape: [
-				[1, 1],
-				[1, 1]
-			]
-		};
-
-		const PIECES = [
-			[
-				[1, 1],
-				[1, 1],
-			],
-			[
-				[1, 1, 1, 1],
-			],
-			[
-				[0, 1, 0],
-				[1, 1, 1],
-			],
-			[
-				[1, 1, 0],
-				[0, 1, 1],
-			],
-			[
-				[0, 1, 1],
-				[1, 1, 0],
-			],
-			[
-				[1, 0],
-				[1, 0],
-				[1, 1],
-			],
-			[
-				[0, 1],
-				[0, 1],
-				[1, 1],
-			],
-		];
-
-		let dropCounter = 0;
-		let lastTime = 0;
-
-		function update(time = 0) {
-			const deltaTime = time - lastTime;
-			lastTime = time;
-
-			dropCounter += deltaTime;
-
-			if(dropCounter > 1000){
-				piece.position.y++;
-				dropCounter = 0;
-				if(checkCollision()){
-					piece.position.y--;
-					solidifyPiece();
-					removeRows();
-				} 
-			}
-
-			draw();
-			window.requestAnimationFrame(update);
-		}
-
-		function draw(){
-			context.fillStyle = "#fff";
-			context.fillRect(0, 0, canvas.width, canvas.height);
-
-			board.forEach((row, y) => {
-				row.forEach((value, x) => {
-					if(value == 1){
-						context.fillStyle = "#000";
-						context.fillRect(x, y, 1, 1);
-					}
-				})
-			})
-
-			piece.shape.forEach((row, y) => {
-				row.forEach((value, x) => {
-					if(value){
-						context.fillStyle = "red";
-						context.fillRect(x + piece.position.x, y + piece.position.y, 1, 1);
-					}
-				})
-			})
-
-			$score.innerText = score;
-		}
-
-		document.addEventListener("keydown", event => {
-			if(event.key == "ArrowLeft") {
-				piece.position.x--;
-				if(checkCollision()){
-					piece.position.x++;
-				} 
-			}
-			if(event.key == "ArrowRight") {
-				piece.position.x++;
-				if(checkCollision()){
-					piece.position.x--;
-				} 
-			}
-			if(event.key == "ArrowDown") {
-				piece.position.y++;
-				if(checkCollision()){
-					piece.position.y--;
-					solidifyPiece();
-					removeRows();
-				} 
-			}
-			if(event.key == "ArrowUp") {
-				const rotated = [];
-				for(let i = 0; i < piece.shape[0].length; i++){
-					const row = [];
-
-					for(let j = piece.shape.length - 1; j >= 0; j--){
-						row.push(piece.shape[j][i])
-					}
-					rotated.push(row);
-				}
-				const previousShape = piece.shape;
-				piece.shape = rotated;
-				if(checkCollision()){
-					piece.shape = previousShape;
-				}
-			}
-		});
-
-		function checkCollision() {
-			return piece.shape.find((row, y) => {
-				return row.find((value, x) =>{
-					return(
-						value !== 0 &&
-						board[y + piece.position.y]?.[x + piece.position.x] !== 0
-					)
-				})
-			})
-		}
-
-		function solidifyPiece() {
-			piece.shape.forEach((row, y) => {
-				row.forEach((value, x) => {
-					if(value == 1){
-						board[y + piece.position.y][x + piece.position.x] = 1
-					}
-				})
-			})
-			//get random shape
-			piece.shape = PIECES[Math.floor(Math.random() * PIECES.length)];
-			//reset position
-			piece.position.x = Math.floor(BOARD_WIDTH/2-1);
-			piece.position.y = 0;
-			//gameover
-			if(checkCollision()){
-				window.alert("Game over!! Sorry");
-				board.forEach((row) => row.fill(0));
-				score = 0;
-			}
-		}
-
-		function removeRows(){
-			const rowsToRemove = [];
-
-			board.forEach((row, y) => {
-				if(row.every(value => value == 1)) {
-					rowsToRemove.push(y);
-				}
-			})
-
-			rowsToRemove.forEach(y => {
-				board.splice(y, 1);
-				const newRow = Array(BOARD_WIDTH).fill(0);
-				board.unshift(newRow);
-				score+=10;
-			})
-
-		}
-
-		update();
-	</script>
-</body>
+	<head>
+		<title>Tetris</title>
+	    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+	    <meta charset="utf-8">
+	    <meta name="viewport" content="width=device-width, initial-scale=1">
+	    <link rel="stylesheet" type="image/jpg" href="https://www.cleanpng.com/png-tetris-app-tetris-blitz-android-electronic-arts-re-1374845/">
+	    <link rel="stylesheet" href="./css/styles.css" type="text/css">
+	    <title>Tetris</title>
+	</head>
+	<body class="d-flex align-items-center bg-body-tertiary">
+		<div class="container h-100vh">
+			<div class="d-flex gap-3 justify-content-center align-items-center h-100pc">
+				<div class="d-flex gap-3 flex-flow-column">
+					<div class="box h-315px">
+						<div class="scores-text">Puntuacion</div>
+						<div class="scores-text mini-box" id="score">0</div>
+						<div class="scores-text">Nivel</div>
+						<div class="scores-text mini-box" id="level">1</div>
+						<div class="scores-text">Lineas</div>
+						<div class="scores-text mini-box" id="lines">0</div>
+					</div>
+					<div class="box h-315px">
+						<div class="scores-text">Siguientes</div>
+						<canvas id="next-pieces">		
+						</canvas>
+					</div>				
+				</div>
+				<div class="box">
+					<canvas id="tetris_box">		
+					</canvas>
+				</div>
+				<div class="box">
+					<div class="scores-text">Instrucciones</div>
+					<p>Utiliza las flechas de direccion del teclado para desplazar las piezas en la pantalla, las flechas laterales (izquierda y derecha) desplazan las piezas de forma horizontal; la flecha hacia abajo, desplaza las piezas de forma mas rapida y la flecha hacia arriba, rota las piezas.</p>
+					<div class="arrow-grid">
+						<button class="mini-box" style="filter: opacity(0);"><img class="i-icon" src="./img/arrow-up.svg"></button>
+						<button class="mini-box"><img class="i-icon" src="./img/arrow-up.svg"></button>
+						<button class="mini-box" style="filter: opacity(0);"><img class="i-icon" src="./img/arrow-up.svg"></button>
+						<button class="mini-box"><img class="i-icon" src="./img/arrow-left.svg"></button>
+						<button class="mini-box"><img class="i-icon" src="./img/arrow-down.svg"></button>
+						<button class="mini-box"><img class="i-icon" src="./img/arrow-right.svg"></button>
+					</div>
+				</div>	
+			</div>
+		</div>
+		<script type="text/javascript" src="./js/script.js"></script>
+	    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+	</body>
 </html>

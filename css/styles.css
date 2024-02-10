@@ -1,0 +1,59 @@
+button.mini-box{
+	cursor: auto;	
+}
+canvas{
+	border-radius: 5px;
+	border: outset 1px #000; 
+}
+.tetris-box {
+ 	margin: calc(50vh - 332px) calc(50vw - 148px);
+}
+.arrow-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 225px;
+}
+.box {
+    padding: 15px;
+    width: 310px;
+    height: 630px;
+    background: linear-gradient(0deg, lightgray, #333);
+    box-shadow: 0px 0px 7px black;
+    border-radius: 10px;
+    color: white;
+}
+.mini-box{
+	background: #222;
+	border-radius: 5px;
+	border: outset 1px #000;
+	padding: 5px;
+}
+.flex-flow-column{
+	flex-flow: column;
+}
+.h-100vh{
+	height: 100vh;
+}
+.h-100pc{
+	height: 100%;
+}
+.h-315px{
+	height: 305px !important;
+}
+.i-icon{
+	height: 50px;
+	width: 50px;
+}
+.instructions-text {
+    font-size: 17px;
+    text-align: justify;
+}
+.scores-text {
+	color: white;
+    font-size: 20px;
+    text-align: center;
+    font-weight: bold;
+    margin: 8px 0px;
+}

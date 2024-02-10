@@ -179,7 +179,6 @@ function draw_np() {
 	nextPieces.forEach(piece => {
 		piece.shape.forEach((row, y) => {
 			row.forEach((value, x) => {
-				console.log(value);
 				if(value){
 					context_np.fillStyle = "yellow";
 					context_np.fillRect(x + piece.position.x, y + piece.position.y, 1, 1);	

@@ -22,9 +22,9 @@ canvas.height = BLOCK_SIZE * BOARD_HEIGHT;
 canvas_np.width  = 280;
 canvas_np.height = 230;
 
-context.scale(BLOCK_SIZE,BLOCK_SIZE);
+context.scale(BLOCK_SIZE, BLOCK_SIZE);
 //siguientes piezas
-context_np.scale(BLOCK_SIZE,BLOCK_SIZE);
+context_np.scale(BLOCK_SIZE, BLOCK_SIZE - 2);
 
 context.lineWidth = 0.1;
 context.lineCap = "square";	
@@ -170,18 +170,13 @@ function draw_np() {
 
 	getNextPieces();
 
-	for (let i = 1; i <= 3; i++) {
-		context.fillStyle = "yellow";
-		context.fillRect((5+i*10), (5+i*10), 1, 1);
-	}
-
 	let i = 1;
 	nextPieces.forEach(piece => {
 		piece.shape.forEach((row, y) => {
 			row.forEach((value, x) => {
 				if(value){
 					context_np.fillStyle = "yellow";
-					context_np.fillRect(x + piece.position.x, y + piece.position.y, 1, 1);	
+					context_np.fillRect(x + piece.position.x, y + (piece.position.y), 1, 1);	
 				}
 			})
 		})
@@ -191,13 +186,31 @@ function draw_np() {
 
 function getNextPieces() {
 	let aux = null;
-	for (let i = 0; i < 3; i++) {
+	if(nextPieces.length){
+		for (let i = 0; i < 2; i++) {
+			nextPieces[i].position.y -= 4;
+		}	
 		aux = {
-			position: { x: Math.floor(6), y: 1+(i*4) },
+			position: { x: Math.floor(6), y: 9 },
 			shape: PIECES[Math.floor(Math.random() * PIECES.length)],
 		};
 		nextPieces.push(aux);
+	}else{
+		for (let i = 0; i < 3; i++) {
+			aux = {
+				position: { x: Math.floor(6), y: 1+(i*4) },
+				shape: PIECES[Math.floor(Math.random() * PIECES.length)],
+			};
+			nextPieces.push(aux);
+		}		
 	}
+}
+
+function getNextPiece(){
+	let nextPiece = nextPieces[0].shape;
+	nextPieces = nextPieces.splice(1,2);
+	draw_np();
+	return nextPiece;
 }
 
 function draw(){
@@ -286,7 +299,8 @@ function solidifyPiece() {
 		})
 	})
 	//get random shape
-	piece.shape = PIECES[Math.floor(Math.random() * PIECES.length)];
+	//piece.shape = PIECES[Math.floor(Math.random() * PIECES.length)];
+	piece.shape = getNextPiece();
 	//reset position
 	piece.position.x = Math.floor(BOARD_WIDTH/2-1);
 	piece.position.y = 0;
@@ -315,7 +329,7 @@ function removeRows(){
 		board.unshift(newRow);
 		score+=10;
 		lines+=1;
-		if(lines%2 == 0) level+=1;
+		if(lines%5 == 0) level+=1;
 	})
 
 }

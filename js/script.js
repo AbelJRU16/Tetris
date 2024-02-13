@@ -159,15 +159,6 @@ function draw_np() {
 	context_np.fillStyle = "#000";
 	context_np.fillRect(0, 0, canvas_np.width, canvas_np.height);
 
-	board.forEach((row, y) => {
-		row.forEach((value, x) => {
-			if(value == 1){
-				context.fillStyle = "gray";
-				context.fillRect(x, y, 1, 1);
-			}
-		})
-	})
-
 	getNextPieces();
 
 	let i = 1;
@@ -182,6 +173,20 @@ function draw_np() {
 		})
 		i++;
 	})
+
+	context_np.lineWidth = 0.1;
+	context_np.strokeStyle = "#44444455";
+	
+	for (var x = 1; x < 14; x++) {
+	  	context_np.moveTo(x, 0);
+	  	context_np.lineTo(x, 502);
+	}
+	for (var y = 1; y < 30; y++) {
+	  	context_np.moveTo(0, y);
+	  	context_np.lineTo(502, y);
+	}
+	
+	context_np.stroke();
 }
 
 function getNextPieces() {
@@ -234,6 +239,20 @@ function draw(){
 			}
 		})
 	})
+
+	context.lineWidth = 0.01;
+	context.strokeStyle = "#44444433";
+	
+	for (var x = 1; x < 14; x++) {
+	  	context.moveTo(x, 0);
+	  	context.lineTo(x, 502);
+	}
+	for (var y = 1; y < 30; y++) {
+	  	context.moveTo(0, y);
+	  	context.lineTo(502, y);
+	}
+	
+	context.stroke();
 
 	$score.innerText = score;
 	$level.innerText = level;
